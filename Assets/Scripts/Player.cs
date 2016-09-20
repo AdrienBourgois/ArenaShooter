@@ -15,7 +15,6 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public float playerSpeed = 2f;
     public Vector3 deltaCamera = new Vector3(0,3,-3);
     public Camera cam { get; private set; }
     public float bulletCooldowm = 0.7f;
@@ -23,16 +22,28 @@ public class Player : MonoBehaviour {
     GameObject cursor = null;
     Vector3 shootDirection = new Vector3();
 
+
+    CharacterController charaController = null;
+    public float speed = 6.0f;
+    public float jumpSpeed = 8.0f;
+    public float gravity = 20.0f;
+    private Vector3 moveDirection = Vector3.zero;
+
     void Awake()
     {
         nextBulletColldown = bulletCooldowm;
         cam = GetComponentInChildren<Camera>();
         cam.transform.LookAt(transform);
         cursor = GameObject.Find("Cursor");
+        charaController = GetComponent<CharacterController>();
     }
-	
-	void Update () {
+
+    void Update() {
         UpdatePosition();
+        UpdateCursor();
+    }
+    void UpdateCursor()
+    {
         RaycastHit hit = new RaycastHit();
         bool isHit = false;
         isHit = Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit);
@@ -45,6 +56,14 @@ public class Player : MonoBehaviour {
 
     void UpdatePosition()
     {
+        moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        moveDirection = transform.TransformDirection(moveDirection);
+        moveDirection *= speed;
+        if (Input.GetButton("Jump"))
+            moveDirection.y = jumpSpeed;
+        moveDirection.y -= gravity * Time.deltaTime;
+        charaController.Move(moveDirection * Time.deltaTime);
+
         Vector3 position = transform.position;
         cam.transform.position = position + deltaCamera;
 
@@ -52,13 +71,6 @@ public class Player : MonoBehaviour {
             nextBulletColldown -= Time.deltaTime;
         else if (nextBulletColldown < 0)
             nextBulletColldown = 0;
-
-        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
-        {
-            position.x += Input.GetAxis("Horizontal") * Time.deltaTime * playerSpeed;
-            position.z += Input.GetAxis("Vertical") * Time.deltaTime * playerSpeed;
-            transform.position = position;
-        }
 
         if (Input.GetButton("Fire1") && nextBulletColldown == 0)
         {
