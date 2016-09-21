@@ -49,8 +49,11 @@ public class Player : MonoBehaviour {
         isHit = Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit);
         if (isHit && LayerMask.NameToLayer("Terrain") == hit.collider.gameObject.layer)
         {
-            cursor.transform.position = hit.point;
-            shootDirection = hit.point;
+            Vector3 hitPosition = hit.point;
+            shootDirection = hitPosition;
+            hitPosition.y += 0.01f;
+            cursor.transform.position = hitPosition;
+            
         }
     }
 
