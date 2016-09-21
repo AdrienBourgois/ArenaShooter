@@ -4,14 +4,12 @@ using System.Collections;
 public class BaseEnemy : MonoBehaviour {
 
     public int life = 1;
-    public float enemySpeed = 2f;
+    public float enemySpeed = 0.2f;
     public float gravity = 20f;
     Player player = null;
-    CharacterController enemyController = null;
 
     void Awake()
     {
-        enemyController = GetComponent<CharacterController>();
         player = Player.Instance;
     }
 
@@ -34,7 +32,8 @@ public class BaseEnemy : MonoBehaviour {
 
     void Update () {
         Vector3 direction = player.transform.position - transform.position;
-        direction.y -= gravity * Time.deltaTime;
-        enemyController.SimpleMove(direction.normalized * enemySpeed);
-	}
+        Vector3 position = transform.position;
+        position += (direction.normalized * enemySpeed * Time.deltaTime);
+        transform.position = position;
+    }
 }

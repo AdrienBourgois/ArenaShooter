@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
     public Vector3 deltaCamera = new Vector3(0,3,-3);
     public Camera cam { get; private set; }
     public float bulletCooldowm = 0.7f;
-    float nextBulletColldown = 0f;
+    float nextBulletCooldown = 0f;
     GameObject cursor = null;
     Vector3 shootDirection = new Vector3();
 
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour {
 
     void Awake()
     {
-        nextBulletColldown = bulletCooldowm;
+        nextBulletCooldown = bulletCooldowm;
         cam = GetComponentInChildren<Camera>();
         cam.transform.LookAt(transform);
         cursor = GameObject.Find("Cursor");
@@ -67,17 +67,17 @@ public class Player : MonoBehaviour {
         Vector3 position = transform.position;
         cam.transform.position = position + deltaCamera;
 
-        if (nextBulletColldown > 0)
-            nextBulletColldown -= Time.deltaTime;
-        else if (nextBulletColldown < 0)
-            nextBulletColldown = 0;
+        if (nextBulletCooldown > 0)
+            nextBulletCooldown -= Time.deltaTime;
+        else if (nextBulletCooldown < 0)
+            nextBulletCooldown = 0;
 
-        if (Input.GetButton("Fire1") && nextBulletColldown == 0)
+        if (Input.GetButton("Fire1") && nextBulletCooldown == 0)
         {
             BaseBullet bulletPrefab = Resources.Load<BaseBullet>("Prefabs/BaseBullet");
             BaseBullet bullet = Instantiate(bulletPrefab);
             bullet.shoot(transform.position, new Vector3(shootDirection.x, position.y, shootDirection.z));
-            nextBulletColldown = bulletCooldowm;
+            nextBulletCooldown = bulletCooldowm;
         }
     }
 }
