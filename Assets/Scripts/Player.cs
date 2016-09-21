@@ -15,13 +15,15 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public Vector3 deltaCamera = new Vector3(0,3,-3);
-    public Camera cam { get; private set; }
+    public Vector3 deltaCamera = new Vector3(0,10,-10);
+    Camera cam = null;
+
+    public int life = 10;
+
     public float bulletCooldowm = 0.7f;
     float nextBulletCooldown = 0f;
     GameObject cursor = null;
     Vector3 shootDirection = new Vector3();
-
 
     CharacterController charaController = null;
     public float speed = 6.0f;
@@ -41,7 +43,9 @@ public class Player : MonoBehaviour {
     void Update() {
         UpdatePosition();
         UpdateCursor();
+        UpdateShoot();
     }
+
     void UpdateCursor()
     {
         RaycastHit hit = new RaycastHit();
@@ -53,7 +57,6 @@ public class Player : MonoBehaviour {
             shootDirection = hitPosition;
             hitPosition.y += 0.01f;
             cursor.transform.position = hitPosition;
-            
         }
     }
 
@@ -62,14 +65,19 @@ public class Player : MonoBehaviour {
         moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= speed;
-        if (Input.GetButton("Jump"))
+        if (Input.GetButton("Jump") && charaController.isGrounded)
+        {
             moveDirection.y = jumpSpeed;
+        }
         moveDirection.y -= gravity * Time.deltaTime;
         charaController.Move(moveDirection * Time.deltaTime);
 
         Vector3 position = transform.position;
         cam.transform.position = position + deltaCamera;
+    }
 
+    void UpdateShoot()
+    {
         if (nextBulletCooldown > 0)
             nextBulletCooldown -= Time.deltaTime;
         else if (nextBulletCooldown < 0)
@@ -79,8 +87,17 @@ public class Player : MonoBehaviour {
         {
             BaseBullet bulletPrefab = Resources.Load<BaseBullet>("Prefabs/BaseBullet");
             BaseBullet bullet = Instantiate(bulletPrefab);
-            bullet.shoot(transform.position, new Vector3(shootDirection.x, position.y, shootDirection.z));
+            bullet.shoot(transform.position, new Vector3(shootDirection.x, transform.position.y, shootDirection.z));
             nextBulletCooldown = bulletCooldowm;
+        }
+    }
+
+    public void OnTriggerEnter(Collider collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            --life;
+            Destroy(collision.gameObject);
         }
     }
 }

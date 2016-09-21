@@ -13,9 +13,7 @@ public class BaseBullet : MonoBehaviour {
         transform.position = from;
         transform.LookAt(to);
         direction = to - from;
-
         previousPosition = transform.position;
-        Debug.Log(previousPosition);
     }
 
 	void FixedUpdate()
