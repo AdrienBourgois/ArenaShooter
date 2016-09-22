@@ -24,7 +24,6 @@ public class Player : MonoBehaviour {
     public float speed = 6.0f;
     public float speedRot = 6.0f;
     public float jumpSpeed = 10.0f;
-    public float gravity = 20.0f;
     private Vector3 moveDirection;
 
     void Awake()
@@ -51,7 +50,7 @@ public class Player : MonoBehaviour {
                 moveDirection.y = jumpSpeed;
 
         }
-        moveDirection.y -= gravity * Time.deltaTime;
+        moveDirection.y += Physics.gravity.y * Time.deltaTime;
         charaController.Move(moveDirection * Time.deltaTime);
     }
 

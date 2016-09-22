@@ -25,5 +25,6 @@ public class PlayerCamera : MonoBehaviour {
 	void Update () {
         Vector3 playerPosition = player.transform.position;
         transform.position = playerPosition + deltaCamera;
+        transform.LookAt(player.transform);
     }
 }

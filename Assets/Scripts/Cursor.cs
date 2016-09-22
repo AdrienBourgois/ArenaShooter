@@ -11,14 +11,21 @@ public class Cursor : MonoBehaviour {
 
     void Update()
     {
-        RaycastHit hit = new RaycastHit();
-        bool isHit = false;
-        isHit = Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit);
-        if (isHit && LayerMask.NameToLayer("Terrain") == hit.collider.gameObject.layer)
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(cam.ScreenPointToRay(Input.mousePosition), 50);
+        if(hits.Length > 0)
         {
-            Vector3 hitPosition = hit.point;
-            hitPosition.y += 0.01f;
-            transform.position = hitPosition;
+            foreach (RaycastHit hit in hits)
+            {
+                if (LayerMask.NameToLayer("Terrain") == hit.collider.gameObject.layer)
+                {
+                    Vector3 hitPosition = hit.point;
+                    hitPosition.y += 0.01f;
+                    transform.position = hitPosition;
+                    return;
+                }
+            }
         }
+        
     }
 }
