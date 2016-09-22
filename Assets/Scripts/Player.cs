@@ -79,7 +79,8 @@ public class Player : MonoBehaviour {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             --life;
-            Destroy(collision.gameObject);
+            BaseEnemy enemy = collision.gameObject.GetComponent<BaseEnemy>();
+            enemy.Kill();
         }
     }
 }

@@ -6,10 +6,12 @@ public class BaseEnemy : MonoBehaviour {
     public int life = 1;
     public float enemySpeed = 0.2f;
     public float gravity = 20f;
+    public int chanceToDrop = 10;
     Player player = null;
 
     void Awake()
     {
+        GameMgr.Instance.AddEnemy(this);
         player = Player.Instance;
     }
 
@@ -17,7 +19,21 @@ public class BaseEnemy : MonoBehaviour {
     {
         --life;
         if (life <= 0)
-            Destroy(gameObject);
+            Kill();
+    }
+
+    public void Kill()
+    {
+        if (Random.Range(0, 100) < chanceToDrop)
+            Drop();
+        GameMgr.Instance.RemoveEnemy(this);
+        Destroy(gameObject);
+    }
+
+    void Drop()
+    {
+        Object pickup = Resources.Load("Prefabs/Pickups/ExplosionPickup");
+        Instantiate(pickup, transform.position, Quaternion.identity);
     }
 
     void OnCollisionEnter(Collision collision)
